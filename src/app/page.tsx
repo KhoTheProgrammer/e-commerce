@@ -20,7 +20,8 @@ import { ProductGrid } from "@/components/products/ProductGrid";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getFeaturedProducts } from "@/lib/mockData";
-import { Cart, Category } from "@/types";
+import { Category } from "@/types";
+import { useCart } from "@/context/CartContext";
 
 const categories = [
   {
@@ -62,22 +63,15 @@ const categories = [
 ];
 
 export default function Home() {
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const { cart, isCartOpen, setIsCartOpen, updateQuantity, removeFromCart } = useCart();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-  const [cart] = useState<Cart>({
-    items: [],
-    totalItems: 0,
-    subtotal: 0,
-    tax: 0,
-    total: 0,
-  });
 
   const featuredProducts = getFeaturedProducts();
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header cartItemCount={cart.totalItems} onCartClick={() => setIsCartOpen(true)} />
+      <Header />
 
       <main className="flex-1">
         {/* Hero Section */}
@@ -197,8 +191,8 @@ export default function Home() {
         cart={cart}
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
-        onUpdateQuantity={(id, qty) => console.log("Update:", id, qty)}
-        onRemoveItem={(id) => console.log("Remove:", id)}
+        onUpdateQuantity={updateQuantity}
+        onRemoveItem={removeFromCart}
       />
 
       {/* Auth Forms */}
