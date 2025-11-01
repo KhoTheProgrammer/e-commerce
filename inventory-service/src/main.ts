@@ -6,4 +6,5 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3000);
   console.warn(`Inventory Service is running on port ${process.env.PORT ?? 3000}`);
 }
-bootstrap();
+
+void bootstrap();
