@@ -6,19 +6,17 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { useCart } from "@/context/CartContext";
 
 interface HeaderProps {
-  cartItemCount?: number;
-  onCartClick?: () => void;
   className?: string;
 }
 
 /**
  * Main header component with navigation, search, and cart
- * @param cartItemCount - Number of items in cart
- * @param onCartClick - Cart button click handler
  */
-export function Header({ cartItemCount = 0, onCartClick, className }: HeaderProps) {
+export function Header({ className }: HeaderProps) {
+  const { cart, setIsCartOpen } = useCart();
   const [isSearchOpen, setIsSearchOpen] = React.useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
@@ -107,12 +105,12 @@ export function Header({ cartItemCount = 0, onCartClick, className }: HeaderProp
               variant="ghost"
               size="icon"
               className="relative"
-              onClick={onCartClick}
+              onClick={() => setIsCartOpen(true)}
             >
               <ShoppingCart className="h-5 w-5" />
-              {cartItemCount > 0 && (
+              {cart.totalItems > 0 && (
                 <span className="bg-primary text-primary-foreground absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-medium">
-                  {cartItemCount}
+                  {cart.totalItems}
                 </span>
               )}
               <span className="sr-only">Cart</span>
