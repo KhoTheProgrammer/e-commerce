@@ -1,0 +1,105 @@
+// This is your Prisma schema file for the Inventory Service
+// Manages products, categories, and inventory tracking for CampusCart
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Product categories enum
+enum Category {
+  TEXTBOOKS
+  ELECTRONICS
+  DORM_SUPPLIES
+  FURNITURE
+  CLOTHING
+  SPORTS
+  OTHER
+}
+
+// Product condition enum
+enum Condition {
+  NEW
+  LIKE_NEW
+  GOOD
+  FAIR
+  POOR
+}
+
+// Product status enum
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  SOLD
+  INACTIVE
+  DELETED
+}
+
+// Main Product model
+model Product {
+  id          String        @id @default(uuid())
+  title       String
+  description String        @db.Text
+  price       Decimal       @db.Decimal(10, 2)
+  category    Category
+  condition   Condition
+  status      ProductStatus @default(ACTIVE)
+
+  // Seller information (will link to User service later)
+  sellerId   String
+  sellerName String
+
+  // Location
+  location String
+
+  // Media
+  images String[] // Array of image URLs
+
+  // Metadata
+  views      Int      @default(0)
+  isFeatured Boolean  @default(false)
+  tags       String[]
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Indexes for performance
+  @@index([category])
+  @@index([sellerId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([price])
+  @@map("products")
+}
+
+// Product statistics and analytics
+model ProductStats {
+  id        String   @id @default(uuid())
+  productId String   @unique
+  views     Int      @default(0)
+  favorites Int      @default(0)
+  inquiries Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("product_stats")
+}
+
+// Product search history for analytics
+model SearchHistory {
+  id        String   @id @default(uuid())
+  query     String
+  results   Int      @default(0)
+  userId    String?
+  createdAt DateTime @default(now())
+
+  @@index([query])
+  @@index([createdAt])
+  @@map("search_history")
+}
